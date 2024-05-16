@@ -1,4 +1,25 @@
 // --- Day 2: I Was Told There Would Be No Math ---
+
+use std::fs;
+
+pub fn print() {
+    println!("Day 2: I Was Told There Wiuld Be No Match");
+    let input = fs::read_to_string("day2_input.txt").expect("err reading day 2 input");
+    let mut ans = 0;
+    let mut ans2 = 0;
+    for line in input.split_whitespace() {
+        let splt: std::str::Split<'_, &str> = line.split("x");
+        let v: Vec<i32> = splt.map(|x| x.parse::<i32>().unwrap()).collect();
+        let l = v.get(0).unwrap();
+        let w = v.get(1).unwrap();
+        let h = v.get(2).unwrap();
+        ans += square_feet_of_wrapping_paper(l, w, h);
+        ans2 += feet_of_ribbon(l, w, h);
+    }
+    println!("answer to pt 1 is {}", ans);
+    println!("answer to pt 2 is {}", ans2);
+}
+
 // The elves are running low on wrapping paper, and so they need to submit an order for more. They have a list of
 // the dimensions (length l, width w, and height h) of each present, and only want to order exactly as much as they
 // need.
@@ -16,7 +37,7 @@
 
 // All numbers in the elves' list are in feet. How many total square feet of wrapping paper should they order?:
 
-pub fn square_feet_of_wrapping_paper(l: &i32, w: &i32, h: &i32) -> i32 {
+fn square_feet_of_wrapping_paper(l: &i32, w: &i32, h: &i32) -> i32 {
     let lw = l * w;
     let wh = w * h;
     let hl = h * l;
@@ -43,11 +64,9 @@ pub fn square_feet_of_wrapping_paper(l: &i32, w: &i32, h: &i32) -> i32 {
 
 // How many total feet of ribbon should they order?
 
-pub fn feet_of_ribbon(l: &i32, w: &i32, h: &i32) -> i32 {
+fn feet_of_ribbon(l: &i32, w: &i32, h: &i32) -> i32 {
     let first = l.min(w).min(h);
     let second = middle_of_three(l, w, h);
-    println!("{} {} {}", l, w, h);
-    println!("{} {}", first, second);
     first * 2 + second * 2 + l * w * h
 }
 

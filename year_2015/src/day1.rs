@@ -1,4 +1,15 @@
 // --- Day 1: Not Quite Lisp ---
+
+use std::fs;
+
+pub fn print() {
+    println!("Day 1: Not Quite Lisp");
+    let input = fs::read_to_string("day1_input.txt").expect("err reading day 1 input");
+    let ans = what_flor(&input);
+    let ans2 = position(&input);
+    println!("answer to pt 1 is {}", ans);
+    println!("answer to pt 2 is {}", ans2);
+}
 // Santa is trying to deliver presents in a large apartment building, but he can't find the right floor - the
 // directions he got are a little confusing. He starts on the ground floor (floor 0) and then follows the
 // instructions one character at a time.
@@ -6,12 +17,11 @@
 // one floor.
 // To what floor do the instructions take Santa?
 
-pub fn what_flor(s: String) -> i32 {
-    s.into_bytes()
-        .iter()
-        .map(|&u| match u {
-            40 => 1,
-            41 => -1,
+fn what_flor(s: &str) -> i32 {
+    s.chars()
+        .map(|c| match c {
+            '(' => 1,
+            ')' => -1,
             _ => 0,
         })
         .reduce(|acc, e| acc + e)
@@ -24,12 +34,12 @@ pub fn what_flor(s: String) -> i32 {
 // on.
 // What is the position of the character that causes Santa to first enter the basement?
 
-pub fn position(s: String) -> i32 {
+fn position(s: &str) -> i32 {
     let mut acc = 0;
-    for (i, u) in s.into_bytes().iter().enumerate() {
-        acc += match u {
-            40 => 1,
-            41 => -1,
+    for (i, c) in s.chars().enumerate() {
+        acc += match c {
+            '(' => 1,
+            ')' => -1,
             _ => 0,
         };
         if acc == -1 {
@@ -46,49 +56,49 @@ mod tests {
 
     #[test]
     fn first() {
-        let result = what_flor(String::from("(())"));
+        let result = what_flor(&String::from("(())"));
         let expected = 0;
         assert_eq!(result, expected);
     }
 
     #[test]
     fn second() {
-        let result = what_flor(String::from("()()"));
+        let result = what_flor(&String::from("()()"));
         let expected = 0;
         assert_eq!(result, expected);
     }
 
     #[test]
     fn third() {
-        let result = what_flor(String::from("((("));
+        let result = what_flor(&String::from("((("));
         let expected = 3;
         assert_eq!(result, expected);
     }
 
     #[test]
     fn forth() {
-        let result = what_flor(String::from("(()()("));
+        let result = what_flor(&String::from("(()()("));
         let expected = 2;
         assert_eq!(result, expected);
     }
 
     #[test]
     fn fifth() {
-        let result = what_flor(String::from(")))"));
+        let result = what_flor(&String::from(")))"));
         let expected = -3;
         assert_eq!(result, expected);
     }
 
     #[test]
     fn pt2_first() {
-        let res = position(String::from(")"));
+        let res = position(&String::from(")"));
         let exp = 1;
         assert_eq!(res, exp);
     }
 
     #[test]
     fn pt2_second() {
-        let res = position(String::from("()())"));
+        let res = position(&String::from("()())"));
         let exp = 5;
         assert_eq!(res, exp);
     }
