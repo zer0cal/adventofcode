@@ -2,7 +2,6 @@
 
 #![allow(dead_code)]
 
-// use hex_literal::hex;
 use md5::Digest;
 use md5::Md5;
 
@@ -43,6 +42,9 @@ fn check_five_zeros(s: &str, n: &u32) -> bool {
     let result = hasher.finalize();
     result[0] == 0 && result[1] == 0 && result[2] < 16
 }
+
+// --- Part Two ---
+// Now find one that starts with six zeroes.
 
 fn six_zeros(s: &str) -> u32 {
     let mut i: u32 = 0;
