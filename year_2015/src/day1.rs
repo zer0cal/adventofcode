@@ -1,5 +1,7 @@
 // --- Day 1: Not Quite Lisp ---
 
+#![allow(dead_code)]
+
 use std::fs;
 
 pub fn print() {

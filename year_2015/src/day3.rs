@@ -1,5 +1,7 @@
 // --- Day 3: Perfectly Spherical Houses in a Vacuum ---
 
+#![allow(dead_code)]
+
 use std::collections::HashSet;
 use std::fs;
 
@@ -34,7 +36,6 @@ struct Point {
     y: i32,
 }
 
-#[allow(dead_code)]
 impl Point {
     fn new(x: i32, y: i32) -> Point {
         Point { x, y }

@@ -1,5 +1,7 @@
 // --- Day 2: I Was Told There Would Be No Math ---
 
+#![allow(dead_code)]
+
 use std::fs;
 
 pub fn print() {
