@@ -7,8 +7,10 @@ use std::fs;
 pub fn print() {
     println!("Day 6: Probably a Fire Hazard (optimalized version)");
     let input = fs::read_to_string("day6_input.txt").expect("err reading day 6 input");
-    let ans = how_many_lights_are_lit(input);
+    let ans = how_many_lights_are_lit(&input);
+    let ans2 = total_brightness(&input);
     println!("answer for pt1 is {}", ans);
+    println!("answer for pt2 is {}", ans2);
 }
 
 // Because your neighbors keep defeating you in the holiday house decorating contest year after year, you've
@@ -166,7 +168,7 @@ fn parse_action(s: &str) -> Action {
     }
 }
 
-fn how_many_lights_are_lit(s: String) -> usize {
+fn how_many_lights_are_lit(s: &str) -> usize {
     let mut lights = Lights::new();
     for line in s.split('\n') {
         match parse_action(line) {
@@ -185,9 +187,106 @@ fn how_many_lights_are_lit(s: String) -> usize {
     lights.len()
 }
 
+// --- Part Two ---
+
+// You just finish implementing your winning light pattern when you realize you mistranslated Santa's message
+// from Ancient Nordic Elvish.
+
+// The light grid you bought actually has individual brightness controls; each light can have a brightness of
+// zero or more. The lights all start at zero.
+
+// The phrase turn on actually means that you should increase the brightness of those lights by 1.
+
+// The phrase turn off actually means that you should decrease the brightness of those lights by 1, to a minimum
+// of zero.
+
+// The phrase toggle actually means that you should increase the brightness of those lights by 2.
+
+// What is the total brightness of all lights combined after following Santa's instructions?
+
+// For example:
+// turn on 0,0 through 0,0 would increase the total brightness by 1.
+// toggle 0,0 through 999,999 would increase the total brightness by 2000000.
+
+fn total_brightness(s: &str) -> usize {
+    let mut lights = LightsWithBrightness::new();
+    for line in s.split('\n') {
+        match parse_action(line) {
+            Action::Toggle(r) => {
+                lights.toggle(r);
+            }
+            Action::TurnOn(r) => {
+                lights.turn_on(r);
+            }
+            Action::TurnOff(r) => {
+                lights.turn_off(r);
+            }
+            Action::Undefined => {}
+        }
+    }
+    lights.brightness()
+}
+
+struct LightsWithBrightness {
+    turned_on: Vec<u8>,
+}
+
+impl LightsWithBrightness {
+    fn set(&mut self, point: Point, value: u8) {
+        if let Some(p) = self.turned_on.get_mut((point.x * 1000 + point.y) as usize) {
+            *p = value;
+        }
+    }
+
+    fn brightness(&self) -> usize {
+        self.turned_on.iter().fold(0, |acc, e| acc + *e as usize)
+    }
+
+    fn new() -> LightsWithBrightness {
+        let mut vec = Vec::new();
+        vec.reserve(1000000);
+        for i in 0..1000000 {
+            vec.insert(i, 0);
+        }
+        LightsWithBrightness { turned_on: vec }
+    }
+
+    fn toggle(&mut self, r: Rectangle) {
+        for i in r.start.x..=r.end.x {
+            for j in r.start.y..=r.end.y {
+                if let Some(p) = self.turned_on.get_mut((i * 1000 + j) as usize) {
+                    *p += 2;
+                }
+            }
+        }
+    }
+
+    fn turn_off(&mut self, r: Rectangle) {
+        for i in r.start.x..=r.end.x {
+            for j in r.start.y..=r.end.y {
+                if let Some(p) = self.turned_on.get_mut((i * 1000 + j) as usize) {
+                    if *p > 0 {
+                        *p -= 1;
+                    }
+                }
+            }
+        }
+    }
+
+    fn turn_on(&mut self, r: Rectangle) {
+        for i in r.start.x..=r.end.x {
+            for j in r.start.y..=r.end.y {
+                if let Some(p) = self.turned_on.get_mut((i * 1000 + j) as usize) {
+                    *p += 1;
+                }
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::day6_opt::{parse_action, Action, Lights, Point, Rectangle};
+    use crate::day6_opt::{parse_action, Action, Lights, LightsWithBrightness, Point, Rectangle};
 
     #[test]
     fn parse_action_test_toggle() {
@@ -254,5 +353,41 @@ mod tests {
         lights.set(Point::new(0, 2), true);
         lights.toggle(rectangle);
         assert_eq!(3, lights.len());
+    }
+
+    #[test]
+    fn turn_lights_on_pt2() {
+        let rectangle = Rectangle::new(Point::new(0, 0), Point::new(1, 1));
+        let mut lights = LightsWithBrightness::new();
+        lights.turn_on(rectangle);
+        assert_eq!(4, lights.brightness());
+        let rectangle = Rectangle::new(Point::new(0, 0), Point::new(0, 1));
+        lights.turn_on(rectangle);
+        assert_eq!(6, lights.brightness());
+    }
+
+    #[test]
+    fn turn_lights_off_pt2() {
+        let rectangle = Rectangle::new(Point::new(0, 0), Point::new(1, 1));
+        let mut lights = LightsWithBrightness::new();
+        lights.set(Point::new(0, 0), 1);
+        lights.set(Point::new(0, 1), 1);
+        lights.set(Point::new(1, 0), 1);
+        lights.set(Point::new(1, 1), 1);
+        lights.turn_off(rectangle);
+        assert_eq!(0, lights.brightness());
+        lights.set(Point::new(0, 0), 1);
+        let rectangle = Rectangle::new(Point::new(0, 0), Point::new(1, 1));
+        lights.turn_off(rectangle);
+        assert_eq!(0, lights.brightness());
+    }
+
+    #[test]
+    fn toggle_lights_pt2() {
+        let rectangle = Rectangle::new(Point::new(0, 0), Point::new(1, 1));
+        let mut lights = LightsWithBrightness::new();
+        lights.set(Point::new(0, 2), 1);
+        lights.toggle(rectangle);
+        assert_eq!(9, lights.brightness());
     }
 }
