@@ -95,9 +95,9 @@ struct Lights {
 }
 
 impl Lights {
-    fn insert(&mut self, point: Point) {
+    fn set(&mut self, point: Point, value: bool) {
         if let Some(p) = self.turned_on.get_mut((point.x * 1000 + point.y) as usize) {
-            *p = true;
+            *p = value;
         }
     }
 
@@ -237,10 +237,10 @@ mod tests {
     fn turn_lights_off() {
         let rectangle = Rectangle::new(Point::new(0, 0), Point::new(1, 1));
         let mut lights = Lights::new();
-        lights.insert(Point::new(0, 0));
-        lights.insert(Point::new(0, 1));
-        lights.insert(Point::new(1, 0));
-        lights.insert(Point::new(1, 1));
+        lights.set(Point::new(0, 0), true);
+        lights.set(Point::new(0, 1), true);
+        lights.set(Point::new(1, 0), true);
+        lights.set(Point::new(1, 1), true);
         lights.turn_off(rectangle);
         assert_eq!(0, lights.len());
     }
@@ -249,9 +249,9 @@ mod tests {
     fn toggle_lights() {
         let rectangle = Rectangle::new(Point::new(0, 0), Point::new(1, 1));
         let mut lights = Lights::new();
-        lights.insert(Point::new(0, 0));
-        lights.insert(Point::new(0, 1));
-        lights.insert(Point::new(0, 2));
+        lights.set(Point::new(0, 0), true);
+        lights.set(Point::new(0, 1), true);
+        lights.set(Point::new(0, 2), true);
         lights.toggle(rectangle);
         assert_eq!(3, lights.len());
     }
