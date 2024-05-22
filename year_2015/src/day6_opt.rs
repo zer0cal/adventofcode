@@ -5,7 +5,7 @@
 use std::fs;
 
 pub fn print() {
-    println!("Day 6: Probably a Fire Hazard");
+    println!("Day 6: Probably a Fire Hazard (optimalized version)");
     let input = fs::read_to_string("day6_input.txt").expect("err reading day 6 input");
     let ans = how_many_lights_are_lit(input);
     println!("answer for pt1 is {}", ans);
@@ -57,67 +57,6 @@ impl Point {
     }
 }
 
-impl PartialOrd for Point {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        if self.x < other.x || self.x == other.x && self.y < other.y {
-            return Some(std::cmp::Ordering::Less);
-        } else if self.x <= other.x || self.x == other.x && self.y <= other.y {
-            return Some(std::cmp::Ordering::Less);
-        } else if self.x > other.x || self.x == other.x && self.y > other.y {
-            return Some(std::cmp::Ordering::Greater);
-        } else if self.x >= other.x || self.x == other.x && self.y >= other.y {
-            return Some(std::cmp::Ordering::Greater);
-        } else {
-            return Some(std::cmp::Ordering::Equal);
-        }
-    }
-}
-
-impl Ord for Point {
-    fn clamp(self, min: Point, max: Point) -> Point
-    where
-        Self: Sized,
-        Self: PartialOrd,
-    {
-        assert!(min <= max);
-        if self < min {
-            min
-        } else if self > max {
-            max
-        } else {
-            self
-        }
-    }
-
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        if self.x < other.x || self.x == other.x && self.y < other.y {
-            return std::cmp::Ordering::Less;
-        } else if self.x <= other.x || self.x == other.x && self.y <= other.y {
-            return std::cmp::Ordering::Less;
-        } else if self.x > other.x || self.x == other.x && self.y > other.y {
-            return std::cmp::Ordering::Greater;
-        } else if self.x >= other.x || self.x == other.x && self.y >= other.y {
-            return std::cmp::Ordering::Greater;
-        } else {
-            return std::cmp::Ordering::Equal;
-        }
-    }
-
-    fn max(self, other: Self) -> Self
-    where
-        Self: Sized,
-    {
-        std::cmp::max_by(self, other, Ord::cmp)
-    }
-
-    fn min(self, other: Self) -> Self
-    where
-        Self: Sized,
-    {
-        std::cmp::min_by(self, other, Ord::cmp)
-    }
-}
-
 impl PartialEq for Point {
     fn eq(&self, other: &Self) -> bool {
         self.x == other.x && self.y == other.y
@@ -152,21 +91,34 @@ enum Action {
 }
 
 struct Lights {
-    turned_on: std::collections::BTreeSet<Point>,
+    turned_on: Vec<bool>,
 }
 
 impl Lights {
-    fn new() -> Lights {
-        Lights {
-            turned_on: std::collections::BTreeSet::new(),
+    fn insert(&mut self, point: Point) {
+        if let Some(p) = self.turned_on.get_mut((point.x * 1000 + point.y) as usize) {
+            *p = true;
         }
     }
 
-    fn turn_on(&mut self, r: Rectangle) {
+    fn len(&self) -> usize {
+        self.turned_on.iter().filter(|x| **x).count()
+    }
+
+    fn new() -> Lights {
+        let mut vec = Vec::new();
+        vec.reserve(1000000);
+        for i in 0..1000000 {
+            vec.insert(i, false);
+        }
+        Lights { turned_on: vec }
+    }
+
+    fn toggle(&mut self, r: Rectangle) {
         for i in r.start.x..=r.end.x {
             for j in r.start.y..=r.end.y {
-                if !self.turned_on.iter().any(|p| p.x == i && p.y == j) {
-                    self.turned_on.insert(Point::new(i, j));
+                if let Some(p) = self.turned_on.get_mut((i * 1000 + j) as usize) {
+                    *p = !(*p);
                 }
             }
         }
@@ -175,25 +127,21 @@ impl Lights {
     fn turn_off(&mut self, r: Rectangle) {
         for i in r.start.x..=r.end.x {
             for j in r.start.y..=r.end.y {
-                self.turned_on.retain(|p| p.x != i && p.y != j)
-            }
-        }
-    }
-
-    fn toggle(&mut self, r: Rectangle) {
-        for i in r.start.x..=r.end.x {
-            for j in r.start.y..=r.end.y {
-                if self.turned_on.iter().any(|p| p.x == i && p.y == j) {
-                    self.turned_on.retain(|p| p.x != i && p.y != j)
-                } else {
-                    self.turned_on.insert(Point::new(i, j));
+                if let Some(p) = self.turned_on.get_mut((i * 1000 + j) as usize) {
+                    *p = false;
                 }
             }
         }
     }
 
-    fn len(&self) -> usize {
-        self.turned_on.len()
+    fn turn_on(&mut self, r: Rectangle) {
+        for i in r.start.x..=r.end.x {
+            for j in r.start.y..=r.end.y {
+                if let Some(p) = self.turned_on.get_mut((i * 1000 + j) as usize) {
+                    *p = true;
+                }
+            }
+        }
     }
 }
 
@@ -239,7 +187,7 @@ fn how_many_lights_are_lit(s: String) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use crate::day6::{parse_action, Action, Lights, Point, Rectangle};
+    use crate::day6_opt::{parse_action, Action, Lights, Point, Rectangle};
 
     #[test]
     fn parse_action_test_toggle() {
@@ -289,10 +237,10 @@ mod tests {
     fn turn_lights_off() {
         let rectangle = Rectangle::new(Point::new(0, 0), Point::new(1, 1));
         let mut lights = Lights::new();
-        lights.turned_on.insert(Point::new(0, 0));
-        lights.turned_on.insert(Point::new(0, 1));
-        lights.turned_on.insert(Point::new(1, 0));
-        lights.turned_on.insert(Point::new(1, 1));
+        lights.insert(Point::new(0, 0));
+        lights.insert(Point::new(0, 1));
+        lights.insert(Point::new(1, 0));
+        lights.insert(Point::new(1, 1));
         lights.turn_off(rectangle);
         assert_eq!(0, lights.len());
     }
@@ -301,13 +249,10 @@ mod tests {
     fn toggle_lights() {
         let rectangle = Rectangle::new(Point::new(0, 0), Point::new(1, 1));
         let mut lights = Lights::new();
-
-        lights.turned_on.insert(Point::new(0, 0));
-        lights.turned_on.insert(Point::new(0, 1));
-        lights.turned_on.insert(Point::new(0, 2));
-        println!("{:?}", lights.turned_on);
+        lights.insert(Point::new(0, 0));
+        lights.insert(Point::new(0, 1));
+        lights.insert(Point::new(0, 2));
         lights.toggle(rectangle);
-        println!("{:?}", lights.turned_on);
         assert_eq!(3, lights.len());
     }
 }
