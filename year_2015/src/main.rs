@@ -5,6 +5,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day6_opt;
+mod day7;
 
 fn main() {
     // day1::print();
@@ -13,5 +14,6 @@ fn main() {
     // day4::print();
     // day5::print();
     // day6::print();
-    day6_opt::print();
+    // day6_opt::print();
+    day7::print();
 }
