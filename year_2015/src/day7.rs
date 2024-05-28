@@ -110,12 +110,9 @@ fn emulate(s: &str) -> HashMap<String, u16> {
     let splt: Vec<&str> = s.split("\n").collect();
     let mut hm: HashMap<String, u16> = HashMap::new();
     let mut done: Vec<String> = Vec::new();
-    let mut keep_doing = true;
-    while keep_doing {
-        keep_doing = false;
+    loop {
         let mut to_be_done = Vec::new();
         for line in splt.iter().filter(|x| !done.contains(&(x.to_string()))) {
-            keep_doing = true;
             let operation = parse_instruction(line);
             match operation {
                 (Operation::SET(value), wire) => {
