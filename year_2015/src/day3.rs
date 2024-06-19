@@ -5,7 +5,7 @@
 use std::collections::HashSet;
 use std::fs;
 
-pub fn print() {
+pub fn answer() {
     println!("Day 3: Prefectly Spherical Houses in a Vacuum");
     let input = fs::read_to_string("day3_input.txt").expect("err reading day3 input");
     let ans = at_least_one_present(&input);

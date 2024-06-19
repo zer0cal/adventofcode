@@ -4,7 +4,7 @@
 
 use std::fs;
 
-pub fn print() {
+pub fn answer() {
     println!("Day 6: Probably a Fire Hazard (optimalized version)");
     let input = fs::read_to_string("day6_input.txt").expect("err reading day 6 input");
     let ans = how_many_lights_are_lit(&input);

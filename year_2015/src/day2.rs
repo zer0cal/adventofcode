@@ -4,7 +4,7 @@
 
 use std::fs;
 
-pub fn print() {
+pub fn answer() {
     println!("Day 2: I Was Told There Wiuld Be No Match");
     let input = fs::read_to_string("day2_input.txt").expect("err reading day 2 input");
     let mut ans = 0;

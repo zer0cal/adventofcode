@@ -6,14 +6,16 @@ mod day5;
 mod day6;
 mod day6_opt;
 mod day7;
+mod day8;
 
 fn main() {
-    // day1::print();
-    // day2::print();
-    // day3::print();
-    // day4::print();
-    // day5::print();
-    // day6::print();
-    // day6_opt::print();
-    day7::print();
+    // day1::answer();
+    // day2::answer();
+    // day3::answer();
+    // day4::answer();
+    // day5::answer();
+    // day6::answer();
+    // day6_opt::answer();
+    // day7::answer();
+    day8::answer();
 }

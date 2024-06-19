@@ -2,7 +2,7 @@
 #![allow(dead_code)]
 use std::{collections::HashMap, fs};
 
-pub fn print() {
+pub fn answer() {
     println!("Day 7: Some Assembly Required");
     let input = fs::read_to_string("day7_input.txt").expect("err reading day 1 input");
     let input2 = fs::read_to_string("day7_input_pt2.txt").expect("err reading day 1 input");

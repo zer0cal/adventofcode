@@ -4,7 +4,7 @@
 
 use std::fs;
 
-pub fn print() {
+pub fn answer() {
     println!("Day 5: Doesn't He Have Intern-Elves For This?");
     let input = fs::read_to_string("day5_input.txt").expect("err reading day 5 input");
     let ans = input.split_whitespace().filter(|x| nice_string(x)).count();

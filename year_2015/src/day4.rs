@@ -5,7 +5,7 @@
 use md5::Digest;
 use md5::Md5;
 
-pub fn print() {
+pub fn answer() {
     println!("Day 4: The Ideal Stocking Stuffer");
     let ans = five_zeros(&String::from("ckczppom"));
     println!("answer to pt 1 is {ans}");

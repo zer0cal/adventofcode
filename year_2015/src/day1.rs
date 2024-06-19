@@ -4,7 +4,7 @@
 
 use std::fs;
 
-pub fn print() {
+pub fn answer() {
     println!("Day 1: Not Quite Lisp");
     let input = fs::read_to_string("day1_input.txt").expect("err reading day 1 input");
     let ans = what_flor(&input);
