@@ -1,7 +1,17 @@
 // --- Day 8: Matchsticks ---
 
+use std::fs;
+
 pub fn answer() {
-    println!("--- Day 8: Matchsticks ---");
+    println!("Day 8: Matchsticks");
+    let input = fs::read_to_string("day8_input.txt").expect("err reading day 8 input");
+    let (total, in_mem) = count_total_and_in_mem_chars(&input);
+    println!(
+        "answer to pt 1 is {} - {} = {}",
+        in_mem,
+        total,
+        in_mem - total
+    );
 }
 
 // Space on the sleigh is limited this year, and so Santa will be bringing his list as a digital copy. He needs
@@ -30,3 +40,107 @@ pub fn answer() {
 
 // For example, given the four strings above, the total number of characters of string code (2 + 5 + 10 + 6 = 23
 // minus the total number of characters in memory for string values (0 + 3 + 7 + 1 = 11) is 23 - 11 = 12.
+
+fn count_total_and_in_mem_chars(s: &str) -> (u32, u32) {
+    let mut characters = 0;
+    let mut codes = 0;
+    let lines = s.split_whitespace();
+    for line in lines {
+        let mut c = line.bytes().into_iter();
+        codes += c.len();
+        c.next();
+        loop {
+            match c.next() {
+                Some(13) | Some(10) => (),
+                Some(b'\\') => match c.next() {
+                    Some(b'x') => {
+                        characters += 1;
+                        c.next();
+                        c.next();
+                    }
+                    None => {
+                        characters -= 1;
+                        break;
+                    }
+                    Some(_) => {
+                        characters += 1;
+                    }
+                },
+                None => {
+                    characters -= 1;
+                    break;
+                }
+                Some(_) => {
+                    characters += 1;
+                }
+            }
+        }
+    }
+    (characters, codes as u32)
+}
+
+#[cfg(test)]
+mod tests {
+    use std::fs;
+
+    use super::count_total_and_in_mem_chars;
+
+    #[test]
+    fn fist_line_from_file() {
+        let input = fs::read_to_string(
+            r"C:\Prog\rust\adventofcode\year_2015\src\day8_input_first_line.txt",
+        )
+        .expect("err reading day 8 input");
+        println!("{}", input);
+        println!("{:?}", input.bytes());
+        let (tot, imem) = count_total_and_in_mem_chars(&input);
+        assert_eq!((tot, imem), (7, 9));
+    }
+
+    #[test]
+    fn oneline() {
+        let s = r#""aaa""#;
+        let (tot, imem) = count_total_and_in_mem_chars(s);
+        assert_eq!((tot, imem), (3, 5));
+    }
+
+    #[test]
+    fn empty() {
+        let s = r#"""
+""
+"""#;
+        let (tot, imem) = count_total_and_in_mem_chars(s);
+        assert_eq!((tot, imem), (0, 6));
+    }
+
+    #[test]
+    fn singlebackslash() {
+        let s = r#""\\""#;
+        let (tot, imem) = count_total_and_in_mem_chars(s);
+        assert_eq!((tot, imem), (1, 4));
+    }
+
+    #[test]
+    fn doublequote() {
+        let s = r#""\"""#;
+        let (tot, imem) = count_total_and_in_mem_chars(s);
+        assert_eq!((tot, imem), (1, 4));
+    }
+
+    #[test]
+    fn ascii_character() {
+        let s = r#""\x11""#;
+        let (tot, imem) = count_total_and_in_mem_chars(s);
+        assert_eq!((tot, imem), (1, 6));
+    }
+
+    #[test]
+    fn multiline() {
+        let s = r#"""
+"abc"
+"aaa\"aaa"
+"\x27""#;
+        let (tot, imem) = count_total_and_in_mem_chars(s);
+        assert_eq!((tot, imem), (11, 23));
+    }
+}
