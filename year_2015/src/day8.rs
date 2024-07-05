@@ -5,12 +5,12 @@ use std::fs;
 pub fn answer() {
     println!("Day 8: Matchsticks");
     let input = fs::read_to_string("day8_input.txt").expect("err reading day 8 input");
-    let (total, in_mem) = count_total_and_in_mem_chars(&input);
+    let (characters, codes) = count_total_and_in_mem_chars(&input);
     println!(
         "answer to pt 1 is {} - {} = {}",
-        in_mem,
-        total,
-        in_mem - total
+        codes,
+        characters,
+        codes - characters
     );
 }
 
@@ -84,9 +84,8 @@ fn count_total_and_in_mem_chars(s: &str) -> (u32, u32) {
 
 #[cfg(test)]
 mod tests {
+    use crate::day8::count_total_and_in_mem_chars;
     use std::fs;
-
-    use super::count_total_and_in_mem_chars;
 
     #[test]
     fn fist_line_from_file() {
@@ -94,15 +93,15 @@ mod tests {
             fs::read_to_string(r"src\day8_input_first_line.txt").expect("err reading day 8 input");
         println!("{}", input);
         println!("{:?}", input.bytes());
-        let (tot, imem) = count_total_and_in_mem_chars(&input);
-        assert_eq!((tot, imem), (7, 9));
+        let (characters, codes) = count_total_and_in_mem_chars(&input);
+        assert_eq!((characters, codes), (7, 9));
     }
 
     #[test]
     fn oneline() {
         let s = r#""aaa""#;
-        let (tot, imem) = count_total_and_in_mem_chars(s);
-        assert_eq!((tot, imem), (3, 5));
+        let (characters, codes) = count_total_and_in_mem_chars(s);
+        assert_eq!((characters, codes), (3, 5));
     }
 
     #[test]
@@ -110,29 +109,29 @@ mod tests {
         let s = r#"""
 ""
 """#;
-        let (tot, imem) = count_total_and_in_mem_chars(s);
-        assert_eq!((tot, imem), (0, 6));
+        let (characters, codes) = count_total_and_in_mem_chars(s);
+        assert_eq!((characters, codes), (0, 6));
     }
 
     #[test]
     fn singlebackslash() {
         let s = r#""\\""#;
-        let (tot, imem) = count_total_and_in_mem_chars(s);
-        assert_eq!((tot, imem), (1, 4));
+        let (characters, codes) = count_total_and_in_mem_chars(s);
+        assert_eq!((characters, codes), (1, 4));
     }
 
     #[test]
     fn doublequote() {
         let s = r#""\"""#;
-        let (tot, imem) = count_total_and_in_mem_chars(s);
-        assert_eq!((tot, imem), (1, 4));
+        let (characters, codes) = count_total_and_in_mem_chars(s);
+        assert_eq!((characters, codes), (1, 4));
     }
 
     #[test]
     fn ascii_character() {
         let s = r#""\x11""#;
-        let (tot, imem) = count_total_and_in_mem_chars(s);
-        assert_eq!((tot, imem), (1, 6));
+        let (characters, codes) = count_total_and_in_mem_chars(s);
+        assert_eq!((characters, codes), (1, 6));
     }
 
     #[test]
@@ -141,7 +140,7 @@ mod tests {
 "abc"
 "aaa\"aaa"
 "\x27""#;
-        let (tot, imem) = count_total_and_in_mem_chars(s);
-        assert_eq!((tot, imem), (11, 23));
+        let (characters, codes) = count_total_and_in_mem_chars(s);
+        assert_eq!((characters, codes), (11, 23));
     }
 }
