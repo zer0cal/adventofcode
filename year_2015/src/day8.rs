@@ -44,35 +44,40 @@ pub fn answer() {
 fn count_total_and_in_mem_chars(s: &str) -> (u32, u32) {
     let mut characters = 0;
     let mut codes = 0;
-    let lines = s.split_whitespace();
-    for line in lines {
-        let mut c = line.bytes().into_iter();
-        codes += c.len();
-        c.next();
-        loop {
-            match c.next() {
-                Some(13) | Some(10) => (),
-                Some(b'\\') => match c.next() {
+    let mut c = s.bytes().into_iter();
+    let mut first_bs = true;
+    loop {
+        println!("{} {} {}", characters, codes, first_bs);
+        match c.next() {
+            Some(13) => (),
+            Some(10) => first_bs = true,
+            Some(b'\"') => {
+                codes += 1;
+            }
+            Some(b'\\') => {
+                codes += 1;
+                match c.next() {
                     Some(b'x') => {
+                        codes += 3;
                         characters += 1;
                         c.next();
                         c.next();
                     }
                     None => {
-                        characters -= 1;
                         break;
                     }
                     Some(_) => {
+                        codes += 1;
                         characters += 1;
                     }
-                },
-                None => {
-                    characters -= 1;
-                    break;
                 }
-                Some(_) => {
-                    characters += 1;
-                }
+            }
+            None => {
+                break;
+            }
+            Some(_) => {
+                codes += 1;
+                characters += 1;
             }
         }
     }
