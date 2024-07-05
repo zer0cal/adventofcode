@@ -45,12 +45,10 @@ fn count_total_and_in_mem_chars(s: &str) -> (u32, u32) {
     let mut characters = 0;
     let mut codes = 0;
     let mut c = s.bytes().into_iter();
-    let mut first_bs = true;
     loop {
-        println!("{} {} {}", characters, codes, first_bs);
         match c.next() {
             Some(13) => (),
-            Some(10) => first_bs = true,
+            Some(10) => (),
             Some(b'\"') => {
                 codes += 1;
             }
@@ -92,10 +90,8 @@ mod tests {
 
     #[test]
     fn fist_line_from_file() {
-        let input = fs::read_to_string(
-            r"C:\Prog\rust\adventofcode\year_2015\src\day8_input_first_line.txt",
-        )
-        .expect("err reading day 8 input");
+        let input =
+            fs::read_to_string(r"src\day8_input_first_line.txt").expect("err reading day 8 input");
         println!("{}", input);
         println!("{:?}", input.bytes());
         let (tot, imem) = count_total_and_in_mem_chars(&input);
