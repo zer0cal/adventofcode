@@ -144,7 +144,7 @@ mod tests {
     use std::fs;
 
     #[test]
-    fn fist_line_from_file() {
+    fn first_line_from_file() {
         let input =
             fs::read_to_string(r"src\day8_input_first_line.txt").expect("err reading day 8 input");
         let (characters, codes) = count_characters_and_utf_codes(&input);
@@ -227,7 +227,7 @@ mod tests {
     }
 
     #[test]
-    fn encoder_fist_line_from_file() {
+    fn encoder_first_line_from_file() {
         let input =
             fs::read_to_string(r"src\day8_input_first_line.txt").expect("err reading day 8 input");
         println!("{}", input);
