@@ -1,5 +1,6 @@
 // --- Day 8: Matchsticks ---
 
+#![allow(dead_code)]
 use std::fs;
 
 pub fn answer() {

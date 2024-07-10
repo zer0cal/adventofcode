@@ -1,4 +1,5 @@
 // --- Day 9: All in a Single Night ---
+#![allow(dead_code)]
 use std::fs;
 
 pub fn answer() {
@@ -80,24 +81,17 @@ fn shortest_distance(s: &str) -> (u32, u32) {
                 let tmp = places_indexes[i];
                 places_indexes[i] = places_indexes[0];
                 places_indexes[0] = tmp;
-                let tmp_dist = get_dist(&places_indexes, &places, &routes);
-                if tmp_dist < min {
-                    min = tmp_dist;
-                }
-                if tmp_dist > max {
-                    max = tmp_dist;
-                }
             } else {
                 let tmp = places_indexes[c[i]];
                 places_indexes[c[i]] = places_indexes[i];
                 places_indexes[i] = tmp;
-                let tmp_dist = get_dist(&places_indexes, &places, &routes);
-                if tmp_dist < min {
-                    min = tmp_dist;
-                }
-                if tmp_dist > max {
-                    max = tmp_dist;
-                }
+            }
+            let tmp_dist = get_dist(&places_indexes, &places, &routes);
+            if tmp_dist < min {
+                min = tmp_dist;
+            }
+            if tmp_dist > max {
+                max = tmp_dist;
             }
             c[i] += 1;
             i = 1;
