@@ -6,7 +6,7 @@ pub fn answer() {
     let ans1 = iter_process_over_seq("1113222113", 40).len();
     println!("answer to pt 1 is {}", ans1);
     let ans2 = iter_process_over_seq("1113222113", 50).len();
-    println!("answer to pt 1 is {}", ans2);
+    println!("answer to pt 2 is {}", ans2);
 }
 
 // Today, the Elves are playing a game called look-and-say. They take turns making sequences by reading aloud the
@@ -27,30 +27,30 @@ pub fn answer() {
 // Starting with the digits in your puzzle input, apply this process 40 times. What is the length of the result?
 
 fn iter_process_over_seq(seq: &str, iterations: usize) -> String {
-    let mut catch = String::new();
-    catch.push_str(seq);
+    let mut cache = String::new();
+    cache.push_str(seq);
     for _ in 0..iterations {
-        catch = process_seq(&catch);
+        cache = process_seq(&cache);
     }
-    catch
+    cache
 }
 
 fn process_seq(seq: &str) -> String {
     let seq = seq.as_bytes();
     let mut l: usize = 0;
-    let mut catch = String::new();
+    let mut cache = String::new();
     for i in 1..seq.len() {
         if seq[l] != seq[i] {
-            catch.push_str(&format!("{}", i - l));
-            catch.push_str(&format!("{}", String::from_utf8(vec![seq[l]]).unwrap()));
+            cache.push_str(&format!("{}", i - l));
+            cache.push_str(&format!("{}", String::from_utf8(vec![seq[l]]).unwrap()));
             l = i;
         }
     }
     if l != seq.len() {
-        catch.push_str(&format!("{}", seq.len() - l));
-        catch.push_str(&format!("{}", String::from_utf8(vec![seq[l]]).unwrap()));
+        cache.push_str(&format!("{}", seq.len() - l));
+        cache.push_str(&format!("{}", String::from_utf8(vec![seq[l]]).unwrap()));
     }
-    catch
+    cache
 }
 
 #[cfg(test)]
