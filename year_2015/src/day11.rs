@@ -4,12 +4,20 @@ use std::time::Instant;
 
 pub fn answer() {
     println!("Day 11: Corporate Policy");
-    let tb0 = Instant::now();
+
+    let t = Instant::now();
     let ans1u8 = next_pass_u8("cqjxjnds", 99999999);
-    println!("answer to pt 1 is {} in {:.2?}", ans1u8, tb0.elapsed());
-    let tb0 = Instant::now();
+    println!("answer to pt 1 is {} in {:.2?}", ans1u8, t.elapsed());
+    let t = Instant::now();
     let ans2u8 = next_pass_u8(&ans1u8, 99999999);
-    println!("answer to pt 2 is {} in {:.2?}", ans2u8, tb0.elapsed());
+    println!("answer to pt 2 is {} in {:.2?}", ans2u8, t.elapsed());
+    // opt
+    let t = Instant::now();
+    let ans1u8mut = mut_next_pass_u8("cqjxjnds", 99999999);
+    println!("opt answer to pt 1 is {} in {:.2?}", ans1u8mut, t.elapsed());
+    let t = Instant::now();
+    let ans2u8mut = mut_next_pass_u8(&ans1u8mut, 99999999);
+    println!("opt answer to pt 2 is {} in {:.2?}", ans2u8mut, t.elapsed());
 }
 
 // Santa's previous password expired, and he needs help choosing a new one.
@@ -99,12 +107,7 @@ fn incremet_pass_u8(pass: &[u8]) -> Vec<u8> {
             c = cr;
             cache.push(u);
         } else if c > 0 {
-            let mut tmp = b'a';
-            for _ in c..0 {
-                let (u, _) = increment_char(&tmp, 1);
-                tmp = u;
-            }
-            cache.push(tmp);
+            cache.push(b'a' + (c as u8) - 1u8);
             break;
         } else {
             break;
@@ -112,6 +115,16 @@ fn incremet_pass_u8(pass: &[u8]) -> Vec<u8> {
     }
     cache.reverse();
     cache
+}
+
+fn mut_incremet_pass_u8(pass: &mut [u8]) {
+    let mut iter = pass.iter_mut().rev();
+    let mut c = 1;
+    while let Some(u) = iter.next() {
+        let (nu, cr) = increment_char(u, c);
+        c = cr;
+        *u = nu;
+    }
 }
 
 fn next_pass_u8(pass: &str, iterations: usize) -> String {
@@ -128,11 +141,25 @@ fn next_pass_u8(pass: &str, iterations: usize) -> String {
     panic!("did not find pass ");
 }
 
+fn mut_next_pass_u8(pass: &str, iterations: usize) -> String {
+    let mut new_pass = Vec::from_iter(pass.bytes());
+    for _ in 0..iterations {
+        mut_incremet_pass_u8(&mut new_pass);
+        if check_first_requirement_u8(&new_pass)
+            && check_second_requirement_u8(&new_pass)
+            && check_third_requirement_u8(&new_pass)
+        {
+            return String::from_utf8(new_pass).unwrap();
+        }
+    }
+    panic!("did not find pass ");
+}
+
 #[cfg(test)]
 mod tests {
     use crate::day11::{
         check_first_requirement_u8, check_second_requirement_u8, check_third_requirement_u8,
-        incremet_pass_u8,
+        incremet_pass_u8, mut_incremet_pass_u8,
     };
 
     #[test]
@@ -149,6 +176,13 @@ mod tests {
             incremet_pass_u8("zzz".as_bytes()),
             Vec::from_iter("aaaa".bytes())
         );
+    }
+
+    #[test]
+    fn mut_next_pass_u8_test() {
+        let pass = &mut [97u8, 97u8, 97u8];
+        mut_incremet_pass_u8(pass);
+        assert_eq!(pass, &[97u8, 97u8, 98u8]);
     }
 
     #[test]
