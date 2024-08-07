@@ -12,6 +12,7 @@ pub fn answer() {
     println!("answer to pt 1 is {}", ans);
     println!("answer to pt 2 is {}", ans2);
 }
+
 // Santa is trying to deliver presents in a large apartment building, but he can't find the right floor - the
 // directions he got are a little confusing. He starts on the ground floor (floor 0) and then follows the
 // instructions one character at a time.
