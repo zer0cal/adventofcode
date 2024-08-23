@@ -214,8 +214,6 @@ mod tests {
 
     use crate::day13::{calculate_happiness, parse_line};
 
-    use super::generate_relations;
-
     #[test]
     fn calculate_happiness_test() {
         let mut people = HashMap::new();
